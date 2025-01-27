@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Factors Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .game-container {
+            margin-top: 50px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+        .number {
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .input-container {
+            margin-top: 20px;
+        }
+        .input-box {
+            width: 60px;
+            height: 40px;
+            font-size: 20px;
+            text-align: center;
+            margin: 10px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            background-color: white;
+        }
+        .input-box::-webkit-outer-spin-button,
+        .input-box::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .score {
+            margin-top: 20px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Factors Game</h1>
+    <div class="game-container">
+        <div class="number" id="number"></div>
+        <div class="input-container" id="input-container">
+        </div>
+        <button class="button" onclick="checkAnswer()">Submit</button>
+        <div class="score">Score: <span id="score">0</span></div>
+        <div id="message"></div>
+    </div>
+    
+    <script>
+        let score = 0;
+        let currentNumber;
+        
+        function getFactors(n) {
+            let factors = [];
+            for (let i = 1; i <= n; i++) {
+                if (n % i === 0) {
+                    factors.push(i);
+                }
+            }
+            return factors;
+        }
+        
+        function setNewNumber() {
+            currentNumber = Math.floor(Math.random() * 30) + 1;
+            document.getElementById("number").textContent = currentNumber;
+            
+            let factors = getFactors(currentNumber);
+            let inputContainer = document.getElementById("input-container");
+            inputContainer.innerHTML = "";
+            
+            factors.forEach((factor, index) => {
+                if (index % 2 === 0) {
+                    let inputBox1 = document.createElement("input");
+                    inputBox1.type = "text";
+                    inputBox1.className = "input-box";
+                    inputBox1.id = `factor${index}`;
+                    
+                    let inputBox2 = document.createElement("input");
+                    inputBox2.type = "text";
+                    inputBox2.className = "input-box";
+                    inputBox2.id = `factor${index + 1}`;
+                    
+                    inputContainer.appendChild(inputBox1);
+                    inputContainer.appendChild(document.createTextNode(" x "));
+                    inputContainer.appendChild(inputBox2);
+                    inputContainer.appendChild(document.createElement("br"));
+                }
+            });
+        }
+        
+        function checkAnswer() {
+            let factors = getFactors(currentNumber);
+            let isCorrect = true;
+            
+            for (let i = 0; i < factors.length; i += 2) {
+                let factor1 = parseInt(document.getElementById(`factor${i}`).value);
+                let factor2 = parseInt(document.getElementById(`factor${i + 1}`).value);
+                
+                if (factor1 * factor2 !== currentNumber) {
+                    isCorrect = false;
+                    break;
+                }
+            }
+            
+            if (isCorrect) {
+                score += 1;
+                document.getElementById("message").textContent = "Correct! Well done.";
+            } else {
+                document.getElementById("message").textContent = "Incorrect. Try again.";
+            }
+            document.getElementById("score").textContent = score;
+            setTimeout(setNewNumber, 2000);
+        }
+        
+        setNewNumber();
+    </script>
+</body>
+</html>
